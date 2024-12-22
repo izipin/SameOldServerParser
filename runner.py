@@ -11,7 +11,7 @@ from flask_server import run
 
 # "45.153.69.196:25565" сервер мартина
 
-# TODO: разделить на два класса
+# TODO: разделить на два класса, лучше на три (+ manager)
 class Checker:
     thread_listener = None
     thread_scaner = None
@@ -34,13 +34,13 @@ class Checker:
 
     def listener(self):
         while not self.listen_flag_event.is_set():
-            inp = input().split(" ")
+            inp = input(">>>").split(" ")
             # print(inp)
             # continue
-            if inp[0] == "exit":
+            if inp[0] == "exit": #TODO: пофиксить зависание на минуту после выключения
                 self.turn_scaner_off()
                 self.turn_listener_off()
-            elif inp[0] == "off":  #TODO: пофиксить зависание на минуту
+            elif inp[0] == "off":  #TODO: пофиксить зависание на минуту после выключения
                 self.turn_scaner_off()
             elif inp[0] == "on":
                 self.turn_scaner_on()
@@ -48,14 +48,17 @@ class Checker:
             #     self.clear_file()
             elif inp[0] == "is" and inp[1] == "on":
                 print(self.is_scaner_online())
-            # elif inp[0] == "help":
-            #     self.clear_file()
-            # elif inp[0] == "log":
-            #     self.clear_file()
+            elif inp[0] == "help":
+                print("'get' - сделать запрос на сервер")
+                print("'is on' - проверить включен ли сканер сервера")
+                print("'on' - включить сканер сервера")
+                print("'off' - выключить сканер сервера")
+                print("'exit' - выключить программу")
+                print("'help' - вызов меню помощи")
             elif inp[0] == "get":
                 print(self.request())
             else:
-                print("хуита")
+                print("хуита, try 'help'")
 
     def is_scaner_online(self):
         return self.is_scaner_on
@@ -73,6 +76,8 @@ class Checker:
             )
             self.thread_scaner.start()
             self.is_scaner_on = True
+        else:
+            print("Сканер уже включен")
 
     def turn_scaner_off(self):
         if self.is_scaner_on:
@@ -80,6 +85,8 @@ class Checker:
             self.thread_scaner.join()
             self.thread_scaner = None
             self.is_scaner_on = False
+        else:
+            print("Сканер уже выключен")
 
     def turn_listener_on(self):
         if not self.is_listener_on:
@@ -91,6 +98,8 @@ class Checker:
             )
             self.thread_listener.start()
             self.is_listener_on = True
+        else:
+            print("Листенер уже включен")
 
     def turn_listener_off(self):
         if self.is_listener_on:
@@ -98,6 +107,8 @@ class Checker:
             # self.thread_listener.join()
             self.thread_listener = None
             self.is_listener_on = False
+        else:
+            print("Листенер уже включен")
 
     def scaner(self):
         while not self.scan_flag_event.is_set():
@@ -138,37 +149,20 @@ class Checker:
     def downoad_file(self):
         pass
 
-    def print_help(self):
-        pass
-
     # def clear_file(self):
     #     file = open(self.file_name, self.file_clear_flag)
     #     file.close()
 
 
 if __name__ == '__main__':
-    # 45.153.69.196:25565 - сервер мартина
-    # host = '217.9.89.177'
-    # wrong_host = '217.90.89.177'
-    # port = 25565
-    #
-    # izi_host = '168.119.145.214'
-    # izi_port = 25638
-    #
-    # inferno_host = '46.8.220.75'
-    # inferno_port = 25565
-
     martin_host = '45.153.69.196'
     martin_port = 25565
 
-    # os.system(f"python server_checker.py {host}")
     ret_arr = RunAndReturn(martin_host)
     if len(ret_arr):
         print(ret_arr)
     else:
         print("сервер наебнулся")
-    t = threading.Thread(target=run)
-    t.start()
 
     check_inferno = Checker(martin_host, martin_port)
     check_inferno.start()

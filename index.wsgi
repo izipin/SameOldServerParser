@@ -11,8 +11,6 @@ application = app
 userLog = ''
 userPass = ''
 output_file = 'martin_log.txt'
-martin_host = '45.153.69.196'
-martin_port = 25565
 
 
 def parse_file():

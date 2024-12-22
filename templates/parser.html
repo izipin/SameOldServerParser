@@ -39,21 +39,21 @@
                       <td>{{ message[0] }}</td>
                       <td>{{ message[1] }}</td>
                       <td>{{ message[3] }}</td>
-                        {% if message[5] > 0 %}
+                        {% if message[4] > 0 %}
                         <td>
                             <div class="dropdown">
                             <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                                {{ message[5] }}
+                                {{ message[4] }}
                               </button>
                               <ul class="dropdown-menu bg-secondary">
-                                  {% for player in message[6] %}
+                                  {% for player in message[5] %}
                                 <li><a class="dropdown-item text-black" href="#">{{ player }}</a></li>
                                 {% endfor %}
                               </ul>
                             </div>
                         </td>
                         {% else %}
-                        <td>{{ message[5] }}</td>
+                        <td>{{ message[4] }}</td>
                         {% endif %}
                     </tr>
                   {% endfor %}

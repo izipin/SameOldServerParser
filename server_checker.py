@@ -148,12 +148,6 @@ def _PackPort(port_num):
 
 
 def RunAndReturn(host, port=DEFAULT_PORT):
-    """
-
-    :param host:
-    :param port:
-    :return:
-    """
     server = McServer(host, port)
     server.Update()
 
