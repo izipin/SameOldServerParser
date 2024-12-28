@@ -1,6 +1,5 @@
-import datetime
 import threading
-from server_checker import RunAndReturn
+from checker.server_checker import RunAndReturn
 
 
 inferno_host = '46.8.220.75'

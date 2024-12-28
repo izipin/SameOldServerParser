@@ -3,7 +3,7 @@ import sys
 sys.path.append('/home/u/user/venv/lib/python3.10/site-packages/')
 # execfile("/home/u/user/server_checker.py")
 from flask import Flask, render_template, current_app
-# from server_checker import RunAndReturn
+from checker.server_checker import RunAndReturn
 
 app = Flask(__name__)
 application = app
@@ -56,7 +56,7 @@ def parse_file():
 
 @application.route("/", methods=['POST', 'GET'])
 def hello():
-    # print("HAHAHA", RunAndReturn())
+    print(RunAndReturn(martin_host))
     context = parse_file()
     return render_template('parser.html', context=context)
 
