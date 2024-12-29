@@ -17,7 +17,7 @@ class Checker:
     thread_scaner = None
 
     def __init__(self, host, port=25565):
-        self.file_name = "../martin_log.txt"
+        self.file_name = "martin_log.txt"
         self.file_open_flag = "a"
         self.file_clear_flag = "w"
         self.timeout = 60  # seconds to wait between requests
