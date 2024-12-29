@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, current_app
 from threading import Thread
 
 
@@ -10,32 +10,38 @@ output_file = 'martin_log.txt'
 
 
 def parse_file():
-    file = open(output_file, 'r')
-    context = []
-    for line in file:
-        line = line.strip()
-        l = list(line.split(sep=' ', maxsplit=6))
-        if len(l) > 6:
-            names = l.pop(-1)
-            names = names.split(sep=',')
-            names.pop(-1)
-            l.append(names)
-        else:
-            for i in range(7 - len(l)):
-                l.append('0')
-        if len(l) > 5:
-            int_num = int(l[5])
-            l.pop(5)
-            l.insert(5, int_num)
-        tmp = l[1][:-3:]
-        l.pop(1)
-        l.insert(1, tmp)
-        # print(l)
-        tup = tuple(l)
-        context.append(tup)
-    file.close()
-    context.reverse()
-    return context
+    with current_app.open_resource(output_file) as file:
+        f = file.read()
+    log_string = f.decode('utf-8')
+    parsed_data = []
+    for line in log_string.strip().split('\n'):
+        parts = line.split(' ')
+        if len(parts) < 3:
+            parsed_data.append(("", "", "", None, 0, []))
+            continue  # Пропускаем строки, которые не имеют нужной структуры
+        try:
+            date = parts[0]
+            time = parts[1]
+            ip_port = parts[2]
+            if "unavailable" in parts:
+                parsed_data.append((date, time, ip_port, "unavailable", 0, None))
+            elif "available" in parts and "players:" in parts:
+                players_index = parts.index("players:")
+                num_players_index = players_index + 1
+                num_players = int(parts[num_players_index])
+                if num_players > 0:
+                    player_names_str = ' '.join(parts[num_players_index + 1:])
+                    if player_names_str.endswith(','):
+                        player_names_str = player_names_str[:-1]
+                    player_names = player_names_str.split(',')
+                    parsed_data.append((date, time, ip_port, "available", num_players, player_names))
+                else:
+                    parsed_data.append((date, time, ip_port, "available", 0, []))
+        except (ValueError, IndexError):
+            # Обработка случаев, когда формат не соответствует ожидаемому
+            parsed_data.append(("", "", "", "unavailable", 0, []))
+    parsed_data.reverse()
+    return parsed_data
 
 
 @application.route("/", methods=['POST', 'GET'])

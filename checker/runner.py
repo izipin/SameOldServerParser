@@ -158,11 +158,13 @@ if __name__ == '__main__':
     martin_host = '45.153.69.196'
     martin_port = 25565
 
-    ret_arr = RunAndReturn(martin_host, martin_port)
+    ret_arr = RunAndReturn(martin_host)
     if len(ret_arr):
         print(ret_arr)
     else:
         print("сервер наебнулся")
+    t = threading.Thread(target=run)
+    t.start()
 
     check_inferno = Checker(martin_host, martin_port)
     check_inferno.start()
